@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sentiment Analysis</title>
+</head>
+<body>
+    <h1>Sentiment Analysis</h1>
+    <form method="post" action="/" id="sentiment-form">
+        <textarea name="text" rows="4" cols="50" form="sentiment-form"></textarea><br>
+        <input type="submit" value="Analyze">
+    </form>
+    {% if results %}
+    <h2>Sentiment Analysis Results:</h2>
+    <ul>
+        {% for result in results %}
+        <li>{{ result.label }}: {{ result.score }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Top Sentiment: {{ top_result.label }}</h2>
+    {% endif %}
+</body>
+</html>

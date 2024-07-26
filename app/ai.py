@@ -1,5 +1,5 @@
 from transformers import pipeline
-from schemas import SentimentScore, SentimentRequest, SentimentResponse
+from app.schemas import SentimentScore, SentimentRequest, SentimentResponse
 
 class SentimentAnalyzer:
     def __init__(self):

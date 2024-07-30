@@ -12,10 +12,26 @@ from loguru import logger
 from pydantic import ValidationError
 from config import DATABASE_API_URL
 from fastapi.responses import HTMLResponse
+from fastapi.exceptions import RequestValidationError, StarletteHTTPException
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
+
+@app.exception_handler(ValidationError)
+async def validation_exception_handler(request: Request, exc: ValidationError):
+    # Extract the first error message
+    error_message = exc.errors()[0].get('msg', 'Invalid input')
+    return templates.TemplateResponse("error.html", {"request": request, "message": error_message}, status_code=422)
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return templates.TemplateResponse(
+        "error.html",
+        {"request": request, "message": exc.detail},
+        status_code=exc.status_code
+    )
 
 @app.get("/")
 async def read_form(request: Request):

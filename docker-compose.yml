@@ -1,0 +1,34 @@
+services:
+  web:
+    build: 
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/app
+      - ./schemas:/app/schemas
+    networks:
+      - backend
+    depends_on:
+      - database
+    restart: on-failure
+
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: sqlite+aiosqlite:///./test.db
+    volumes:
+      - ./database:/app
+      - ./schemas:/schemas
+    networks:
+      - backend
+    ports:
+      - "8081:8081"
+    restart: on-failure
+
+networks:
+  backend:
+    driver: bridge

@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, field_validator
 from typing import List
 from fastapi import Form
 from enum import Enum
+from typing import Optional
 
 class SentimentLabel(str, Enum):
     NEUTRAL = 'neutral'

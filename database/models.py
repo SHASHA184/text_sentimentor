@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float
-from app.database import Base
-from app.schemas import SentimentResponse
+from database import Base
+from schemas.sentiment_schemas import SentimentResponse
 
 class Sentiment(Base):
     __tablename__ = "sentiments"

@@ -1,24 +1,28 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends,  HTTPException
 from fastapi.templating import Jinja2Templates
-from app.ai import SentimentAnalyzer
-from app.schemas import SentimentRequest, SentimentResponse, SentimentScore
-from app.database import get_db
-from app.models import Sentiment
-from sqlalchemy.orm import Session
+from ai import SentimentAnalyzer
+from schemas.sentiment_schemas import SentimentRequest, SentimentResponse, SentimentScore
 import uvicorn
+import aiohttp
+from loguru import logger
 
 app = FastAPI()
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory="templates")
+DATABASE_API_URL = "http://database:8081"
 
 @app.get("/")
 async def read_form(request: Request):
     return templates.TemplateResponse("form.html", {"request": request})
 
 @app.post("/", response_model=SentimentResponse)
-async def analyze_sentiment_view(sentiment: SentimentRequest = Depends(SentimentRequest.as_form), db: Session = Depends(get_db)):
+async def analyze_sentiment_view(sentiment: SentimentRequest = Depends(SentimentRequest.as_form)):
     analysis = SentimentAnalyzer().analyze_sentiment(sentiment)
-    await Sentiment.create(db, analysis)
-    return analysis
+    
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{DATABASE_API_URL}/sentiments/", json=analysis.model_dump()) as response:
+            if response.status != 200:
+                raise HTTPException(status_code=response.status, detail="Failed to save sentiment")
+            return await response.json()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

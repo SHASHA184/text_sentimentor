@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float
 from database import Base
 from schemas.sentiment_schemas import SentimentResponse
+from loguru import logger
 
 class Sentiment(Base):
     __tablename__ = "sentiments"
@@ -12,7 +13,7 @@ class Sentiment(Base):
     negative = Column(Float)
 
     @classmethod
-    async def create(cls, db_session, sentiment: SentimentResponse):
+    async def create(cls, db_session, sentiment: SentimentResponse) -> SentimentResponse:
         new_sentiment = cls(
             text=sentiment.text,
             neutral=sentiment.results[0].score,
@@ -21,3 +22,12 @@ class Sentiment(Base):
         )
         db_session.add(new_sentiment)
         await db_session.commit()
+        await db_session.refresh(new_sentiment)
+
+        return SentimentResponse.from_db(
+            id=new_sentiment.id,
+            text=new_sentiment.text,
+            neutral=new_sentiment.neutral,
+            positive=new_sentiment.positive,
+            negative=new_sentiment.negative
+        )

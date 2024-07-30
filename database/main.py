@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from models import Sentiment
 from schemas.sentiment_schemas import SentimentResponse
 from database import get_db
+from loguru import logger
 
 
 app = FastAPI()

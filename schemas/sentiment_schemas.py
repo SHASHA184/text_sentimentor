@@ -21,6 +21,17 @@ class SentimentRequest(BaseModel):
         return cls(text=text)
 
 class SentimentResponse(BaseModel):
+    id: Optional[int] = None
     text: str
     results: List[SentimentScore]
     top_result: SentimentScore
+
+    @classmethod
+    def from_db(cls, id: int, text: str, neutral: float, positive: float, negative: float):
+        scores = [
+            SentimentScore(label="neutral", score=neutral),
+            SentimentScore(label="positive", score=positive),
+            SentimentScore(label="negative", score=negative),
+        ]
+        top_result = max(scores, key=lambda x: x.score)
+        return cls(id=id, text=text, results=scores, top_result=top_result)

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis Results</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Sentiment Analysis Results</h1>
+    <div>
+        <h2>Text:</h2>
+        <p>{{ text }}</p>
+
+        <h2>Overall Sentiment:</h2>
+        <p><strong>{{ top_result.label.name }}</strong> (Score: {{ top_result.score }})</p>
+
+        <h2>Detailed Results:</h2>
+        <ul>
+            <li>Neutral: {{ results[0].score }}</li>
+            <li>Positive: {{ results[1].score }}</li>
+            <li>Negative: {{ results[2].score }}</li>
+        </ul>
+
+        <a href="/">Analyze another text</a>
+    </div>
+</body>
+</html>

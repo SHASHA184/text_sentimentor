@@ -20,6 +20,7 @@ class Sentiment(Base):
             positive=sentiment.results[1].score,
             negative=sentiment.results[2].score
         )
+        
         db_session.add(new_sentiment)
         await db_session.commit()
         await db_session.refresh(new_sentiment)
